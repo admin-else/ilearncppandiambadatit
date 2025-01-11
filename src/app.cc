@@ -10,19 +10,35 @@
 #include <glm/glm.hpp>
 
 using glm::vec3;
-
-constexpr float vertices[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f,
-                              0.0f,  0.0f,  0.5f, 0.0f};
-
+constexpr float vertices[] = {
+    0.5f,  0.5f,  0.0f, // top right
+    0.5f,  -0.5f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f, // bottom left
+    -0.5f, 0.5f,  0.0f  // top left
+};
+constexpr unsigned int indices[] = {
+    // note that we start from 0!
+    0, 1, 3, // first triangle
+    1, 2, 3  // second triangle
+};
 static void errorCallback(int code, const char *message) {
     throw GameError(message);
 }
 
-void static frambufferSizeCallback(GLFWwindow *window, int width, int height) {
+static void frambufferSizeCallback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+void App::updateWireframeMode() {
+    glPolygonMode(GL_FRONT_AND_BACK,
+                  m_settings.debug_wireframe ? GL_LINE : GL_FILL);
+}
+
 void App::processInputs() {
+    if (glfwGetKey(m_glWinodw, GLFW_KEY_F3) == GLFW_PRESS) {
+        m_settings.debug_wireframe = !m_settings.debug_wireframe;
+        updateWireframeMode();
+    }
     if (glfwGetKey(m_glWinodw, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(m_glWinodw, GLFW_TRUE);
 }
@@ -40,9 +56,10 @@ void App::run() {
     vao.bind();
     GLBuffer vbo(GL_ARRAY_BUFFER);
     vbo.data(&vertices, sizeof(vertices), GL_STATIC_DRAW);
+    GLBuffer ebo(GL_ELEMENT_ARRAY_BUFFER);
+    ebo.data(&indices, sizeof(indices), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3),
-                          (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void *)0);
     glEnableVertexAttribArray(0);
 
     Shader shader("tri");
@@ -55,8 +72,7 @@ void App::run() {
 
         shader.use();
         vao.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(m_glWinodw);
         glfwPollEvents();
         checkGLError();
