@@ -54,9 +54,10 @@ void App::checkGLError() {
 void App::run() {
     Vao vao;
     vao.bind();
-    GLBuffer vbo(GL_ARRAY_BUFFER);
+    GLBuffer<GL_ARRAY_BUFFER> vbo;
     vbo.data(&vertices, sizeof(vertices), GL_STATIC_DRAW);
-    GLBuffer ebo(GL_ELEMENT_ARRAY_BUFFER);
+
+    GLBuffer<GL_ELEMENT_ARRAY_BUFFER> ebo;
     ebo.data(&indices, sizeof(indices), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void *)0);
