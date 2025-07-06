@@ -3,10 +3,10 @@
 #include <GL/glew.h>
 
 class Vao {
-    GLuint m_vao;
+    GLuint m_vao{};
 
   public:
-    void bind() { glBindVertexArray(m_vao); }
+    void bind() const { glBindVertexArray(m_vao); }
     static void unbind() { glBindVertexArray(0); }
 
     Vao() { glGenVertexArrays(1, &m_vao); }

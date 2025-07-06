@@ -1,10 +1,11 @@
+#pragma once
 #include <GL/glew.h>
 #include <cstddef>
 
 using std::size_t;
 
 template <GLenum T> class GLBuffer {
-    GLuint m_buffer;
+    GLuint m_buffer{};
 
   public:
     GLBuffer() {
@@ -13,9 +14,9 @@ template <GLenum T> class GLBuffer {
 
     ~GLBuffer() { glDeleteBuffers(1, &m_buffer); }
 
-    inline void bind() { glBindBuffer(T, m_buffer); }
+    void bind() const { glBindBuffer(T, m_buffer); }
 
-    inline void data(const void *data, size_t size, GLenum usage) {
+    void data(const void *data, const size_t size, const GLenum usage) const {
         bind();
         glBufferData(T, size, data, usage);
     }

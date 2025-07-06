@@ -8,12 +8,11 @@ struct settings {
 };
 
 class App {
-  private:
-    struct settings m_settings;
-    GLFWwindow *m_glWinodw;
+    settings m_settings;
+    GLFWwindow *m_glWindow;
     void processInputs();
-    void updateWireframeMode();
-    void checkGLError();
+    void updateWireframeMode() const;
+    static void checkGLError();
 
   public:
     App();
